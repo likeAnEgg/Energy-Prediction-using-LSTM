@@ -13,11 +13,11 @@ from scipy import stats, integrate
 import matplotlib.pyplot as plt
 
 #load the dataset
-ASHRAE_train = pd.read_csv('./input/ashrae-energy-prediction/train.csv')
-ASHRAE_test = pd.read_csv('./input/ashrae-energy-prediction/test.csv')
-weather_train = pd.read_csv('./input/ashrae-energy-prediction/weather_train.csv')
-weather_test = pd.read_csv('./input/ashrae-energy-prediction/weather_test.csv')
-building_meta = pd.read_csv('./input/ashrae-energy-prediction/building_metadata.csv')
+ASHRAE_train = pd.read_csv('./input/data/train.csv')
+ASHRAE_test = pd.read_csv('./input/data/test.csv')
+weather_train = pd.read_csv('./input/data/weather_train.csv')
+weather_test = pd.read_csv('./input/data/weather_test.csv')
+building_meta = pd.read_csv('./input/data/building_metadata.csv')
 ## Function to reduce the DF size
 def reduce_memory_usage(df, verbose=True):
     numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
@@ -109,10 +109,6 @@ plot_dist(BTW_train, "sea_level_pressure")
 sns.boxplot(x = 'meter', y = 'meter_reading', data = BTW_train)
 
 def outlier_function(df, col_name):
-    ''' this function detects first and third quartile and interquartile range for a given column of a dataframe
-    then calculates upper and lower limits to determine outliers conservatively
-    returns the number of lower and uper limit and number of outliers respectively
-    '''
     first_quartile = np.percentile(
         np.array(df[col_name].tolist()), 25)
     third_quartile = np.percentile(

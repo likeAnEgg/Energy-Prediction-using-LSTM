@@ -260,6 +260,7 @@ es = EarlyStopping(monitor='val_root_mean_squared_error', min_delta=0.0001, pati
 model = make_model(input_dim=x_train.shape[-1],drop_rate=0.2)
 model.summary()
 
+
 history = run_model(model,x_train,y_train,epochs=30,batch_size=500,verbose=1,validation_data=(x_val,y_val), callbacks =[es]) # callbacks =[mc, es]
 loss = history.history
 loss.keys()
@@ -276,12 +277,14 @@ plt.title(' root mean square error loss')
 plt.legend()
 plt.show()
 
-
-submit = pd.read_csv('./input/ashrae-energy-prediction/sample_submission.csv') 
+'''
+#output
+submit = pd.read_csv('./input/data/sample_submission.csv') 
 x_test = BTW_test[['meter', 'building_id', 'primary_use', 'Month', 'Day','air_temperature', 'wind_speed', 'precip_depth_1_hr', 'cloud_coverage','square_feet']]
 x_test = x_test.values[:]
 x_test = x_test.reshape((x_test.shape[0],1,x_test.shape[-1]))
 prediction = history.predict(x_test)
 prediction = np.expm1(prediction)
 submit['meter_reading'] = prediction
-submit.to_csv('submission.csv', index=False,float_format='%.4f')
+submit.to_csv('./output/submission.csv', index=False,float_format='%.4f')
+'''

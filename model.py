@@ -20,6 +20,7 @@ def make_model(input_dim=10,metrics=root_mean_squared_error,loss='mse', optimize
   model.compile(optimizer=optimizer, loss=loss, metrics=[metrics])
   
   return model
+
 def run_model(model,x_train,y_train,epochs=50,batch_size=500,verbose=1,validation_data=(x_val,y_val),callbacks =None):
   x_train = x_train.values[:]
   x_train= x_train.reshape((x_train.shape[0],1,x_train.shape[-1]))
@@ -32,9 +33,13 @@ def run_model(model,x_train,y_train,epochs=50,batch_size=500,verbose=1,validatio
   return model.fit(x_train,y_train,epochs=epochs,batch_size=batch_size,verbose=verbose,validation_data=(x_val,y_val),callbacks=callbacks)
 #best_model_file = "my_model.h5"
 #mc = ModelCheckpoint(best_model_file, monitor='val_loss', mode='auto',verbose=True, save_best_only=True)
-es = EarlyStopping(monitor='val_root_mean_squared_error', min_delta=0.0001, patience=5, verbose=True, mode='auto')
+
+
+# es = EarlyStopping(monitor='val_root_mean_squared_error', min_delta=0.0001, patience=5, verbose=True, mode='auto')
 model = make_model(input_dim=x_train.shape[-1],drop_rate=0.2)
 model.summary()
+#from keras.utils import plot_model
+#plot_model(model,to_file='model.png')
 
 history = run_model(model,x_train,y_train,epochs=30,batch_size=500,verbose=1,validation_data=(x_val,y_val), callbacks =[es]) # callbacks =[mc, es]
 loss = history.history
@@ -53,12 +58,13 @@ plt.legend()
 plt.show()
 
 '''
-submit = pd.read_csv('./input/ashrae-energy-prediction/sample_submission.csv') 
+#output
+submit = pd.read_csv('./input/data/sample_submission.csv') 
 x_test = BTW_test[['meter', 'building_id', 'primary_use', 'Month', 'Day','air_temperature', 'wind_speed', 'precip_depth_1_hr', 'cloud_coverage','square_feet']]
 x_test = x_test.values[:]
 x_test = x_test.reshape((x_test.shape[0],1,x_test.shape[-1]))
 prediction = history.predict(x_test)
 prediction = np.expm1(prediction)
 submit['meter_reading'] = prediction
-submit.to_csv('submission.csv', index=False,float_format='%.4f')
+submit.to_csv('./output/submission.csv', index=False,float_format='%.4f')
 '''
