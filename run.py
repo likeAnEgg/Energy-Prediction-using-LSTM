@@ -11,7 +11,14 @@ import gc
 from scipy.stats import norm # for scientific Computing
 from scipy import stats, integrate
 import matplotlib.pyplot as plt
-
+from sklearn.preprocessing import LabelEncoder
+from sklearn import preprocessing
+from keras import backend as K
+from keras.callbacks import ModelCheckpoint, EarlyStopping
+from keras.layers import Dense, LSTM, GRU, Dropout, BatchNormalization
+from keras.models import Sequential
+from keras.optimizers import RMSprop,Adam
+from keras import regularizers
 #load the dataset
 ASHRAE_train = pd.read_csv('./input/data/train.csv')
 ASHRAE_test = pd.read_csv('./input/data/test.csv')
@@ -210,8 +217,6 @@ BTW_train.primary_use.unique()
 BTW_encoded = BTW_train[:]
 BTW_test_encoded = BTW_test[:]
 # label encoding 
-from sklearn.preprocessing import LabelEncoder
-
 le = LabelEncoder()
 BTW_encoded["primary_use"] = le.fit_transform(BTW_encoded["primary_use"])
 BTW_test_encoded["primary_use"] = le.fit_transform(BTW_test_encoded["primary_use"])
@@ -222,13 +227,7 @@ X = BTW_encoded[['meter', 'building_id', 'primary_use', 'Month', 'Day','air_temp
 y = BTW_encoded['meter_reading']
 x_train, x_val, y_train, y_val = train_test_split(X,y, test_size = 0.2, random_state= 45)
 
-from sklearn import preprocessing
-from keras import backend as K
-from keras.callbacks import ModelCheckpoint, EarlyStopping
-from keras.layers import Dense, LSTM, GRU, Dropout, BatchNormalization
-from keras.models import Sequential
-from keras.optimizers import RMSprop,Adam
-from keras import regularizers
+#model
 def root_mean_squared_error(y_true, y_pred):
   return K.sqrt(K.mean(K.square(y_pred - y_true)))
 def make_model(input_dim=10,metrics=root_mean_squared_error,loss='mse', optimizer="rmsprop",drop_rate=0.5):
